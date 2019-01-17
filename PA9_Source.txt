@@ -1,0 +1,223 @@
+/*
+ * The SearchDemo class contains all the methods needed to search the array, sort 
+ * the array, and search it using iteration and recursion 
+ */
+package aladimi_pa9;
+
+import java.util.Random;
+
+/**
+ * @author Nadia Aladimi
+ */
+public class SearchDemo {
+
+    private double[] array;
+    private Random num;
+
+    /**
+     * This method fills the array with random numbers between 1 and 10000
+     * @param arraySize
+     */
+    public void initializeArray(int arraySize) {
+        array = new double[arraySize];
+        num = new Random();
+        double temp;
+        for (int i = 0; i < arraySize; i++) {
+            temp = num.nextInt(1000 * arraySize) / 10.0;
+            array[i] = temp;
+        }
+        sort();
+    }
+    /**
+     * the sort method uses shell sort to sort the array in ascending order
+     */
+    public void sort() {
+        int temp = array.length / 2;
+        while (temp > 0) {
+            for (int i = temp; i < array.length; i++) {
+                int j = i;
+                double temp2 = array[i];
+                while (j >= temp && array[j - temp] > temp2) {
+                    array[j] = array[j - temp];
+                    j = j - temp;
+                }
+                array[j] = temp2;
+            }
+            if (temp == 2) {
+                temp = 1;
+            } else {
+                temp *= (5.0 / 11);
+            }
+        }
+    }
+    /**
+     * creates a StringBuilder object and makes it so that it prints out 6
+     * values per line 
+     * @return the string builder 
+     */
+
+    @Override
+    public String toString() {
+        //create StringBuilder object 
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (count == 6) {
+                //puts it on a new line if there are more than 6 values 
+                sb.append("\n");
+                count = 0;
+            }
+            sb.append(array[i] + "   ");
+            count++;
+        }
+        return sb.toString();
+    }
+    /**
+     * iterationSearch method uses iteration to search through the array 
+     * @param sv search value 
+     * @return 
+     */
+
+    public int iterationSearch(double sv) {
+        int lb = 0;
+        int ub = array.length - 1;
+        double dvlb = array[lb];
+        double dvub = array[ub];
+        while (array[lb] <= sv && array[ub] >= sv) {
+            if (array[ub] - array[lb] == 0) {
+                return (lb + ub) / 2;
+            }
+            int sp = (int) (lb + ((sv - dvlb) / (dvub - dvlb) * (ub - lb)));
+            if (array[sp] < sv) {
+                lb = sp + 1;
+                dvlb = array[lb];
+            } else if (array[sp] < sv) {
+                ub = sp + 1;
+                dvub = array[ub];
+            } else {
+                return sp;
+            }
+        }
+        return -1;
+    }
+    /**
+     * recursiveSearch method uses recursion to search through the array 
+     * @param sv
+     * @param lb
+     * @param ub
+     * @return -1 
+     */
+
+    private int recursiveSearch(double sv, int lb, int ub) {
+        double dvlb = array[lb];
+        double dvub = array[ub];
+        int sp = (int) (lb + ((sv - dvlb) / (dvub - dvlb)) * (ub - lb));
+        if (array[sp] == sv) {
+            return sp;
+        } else if (sv < array[sp]) {
+            ub = sp - 1;
+            return recursiveSearch(sv, lb, ub);
+        } else if (sv > array[sp]) {
+            lb = sp + 1;
+            return recursiveSearch(sv, lb, ub);
+        }
+        //if all the above conditions are false 
+        return -1;
+    }
+    /**
+     * this method makes it easier to call the above method in main
+     * @param sv
+     * @return recursiveSearch(sv, lb, ub)
+     */
+
+    public int beginRecursionSearch(double sv) {
+        int lb = 0;
+        int ub = array.length - 1;
+        return recursiveSearch(sv, lb, ub);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * This lab demonstrates the use of interpolation search  
+ */
+package aladimi_pa9;
+
+import java.util.Scanner;
+
+/**
+ * @author Nadia Aladimi
+ * CS 1181 - 03
+ * Instructor: Richard Volkers
+ * TA: Sai Polamarasetty 
+ */
+public class Aladimi_PA9 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        //create SearchDemo object and use initializeArray method to create the array
+        SearchDemo sd = new SearchDemo();
+        sd.initializeArray(100);
+        String print = sd.toString();
+        System.out.println(print);
+
+        //get user input
+        Scanner scanner = new Scanner(System.in);
+        //tests for the first middle and last values for the iteration method 
+        System.out.println("Enter the first, last, and middle values:");
+        double first = scanner.nextDouble();
+        double last = scanner.nextDouble();
+        double middle = scanner.nextDouble();
+
+        //call this 3 times with lower/upper/mid from user
+        int location = sd.iterationSearch(first);
+        int location2 = sd.iterationSearch(last);
+        int location3 = sd.iterationSearch(middle);
+
+        //print out the results 
+        System.out.println("location 1 = " + location);
+        System.out.println("location 2 = " + location2);
+        System.out.println("location 3 = " + location3);
+
+        //begin testing for the middle, end, and first values using the recursive method 
+        System.out.println("\nRecursive search:");
+        int place = sd.beginRecursionSearch(first);
+        System.out.println("location 1 = " + place);
+        int place2 = sd.beginRecursionSearch(last);
+        System.out.println("location 2 = " + place2);
+        int place3 = sd.beginRecursionSearch(middle);
+        System.out.println("location 3 = \n" + place3);
+
+        //begin testing for negative values. The result should be -1 
+        System.out.println("Search for value less than one:");
+        double negativeValue = scanner.nextDouble();
+        int negativeTest = sd.iterationSearch(negativeValue);
+        //tests the recursive method for this case 
+        int negativeTest2 = sd.beginRecursionSearch(negativeValue);
+        System.out.println("Value: " + negativeTest);
+        System.out.println("\n Recursive Value:" + negativeTest2);
+        
+        //testing for values that are greater than the indexes in the array
+        System.out.println("Search for a value greater than 99:");
+        double greaterValue = scanner.nextDouble();
+        int greaterValueTest = sd.iterationSearch(greaterValue); 
+        int greaterValueTest2 = sd.beginRecursionSearch(greaterValue);
+        System.out.println("Value: " +greaterValueTest);
+        System.out.println("\n Recursive Value: " +greaterValueTest2);
+    }
+}
