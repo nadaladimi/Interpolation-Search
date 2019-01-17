@@ -160,9 +160,6 @@ import java.util.Scanner;
 
 /**
  * @author Nadia Aladimi
- * CS 1181 - 03
- * Instructor: Richard Volkers
- * TA: Sai Polamarasetty 
  */
 public class Aladimi_PA9 {
 
